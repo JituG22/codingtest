@@ -21,9 +21,10 @@
                         >color<input
                             type="color"
                             class="color-input"
-                            value="#000000" /><span
+                            value="#000000" />
+                            <span
                             class="color-value-display"
-                        ></span></label
+                        >#00c3d0</span></label
                     ><label
                         >alpha<input
                             type="range"
@@ -84,7 +85,6 @@
         <script>
             // convenience alias for selectin elements.
             const $ = document.querySelector.bind(document);
-
             // these you can skip, or change as long as the test pass.
             const component = $('.component');
             const alphaInput = $('.alpha-input');
@@ -92,7 +92,8 @@
             const colorInput = $('.color-input');
             const colorValueDisplay = $('.color-value-display');
             const previewElement = $('.preview');
-
+            const chipPetrolElement = $('.chip--petrol');
+            
             const onEveryFrame = () => {
                 // this can bu run on "every frame"
             };
@@ -133,62 +134,94 @@
              * @param tuple [string, float]
              * @return string an rgba() color, it defaults to white
              */
-             function hexToRgba(hex, alpha = 100) {
+                const isDecimal = function(num) {
+                        return !!(num % 1);
+                    } 
+                var alphaNum;
+                var withoutHash;
+                const alphaHandel = function(alpha){
+                    if(!isDecimal(alpha) && alpha == 100){
+                        alphaNum = 1;
+                    }else if(isDecimal(alpha)){
+                        if(alpha > 0 && alpha !== 100){
+                            let numStr = String(alpha).replace(".",""); 
+                            alphaNum =  Number("0."+ numStr) ;
+                        }else if(alpha === 100){
+                            alphaNum = 1;
+                        }else {
+                            alphaNum =  alpha;
+                        }
+                    }else{
+                        let  result = 100 * (alpha / 100);
+                        alphaNum = alpha === 100  ? 1 : Number("0."+ result) ; 
+                    }
+                    return alphaNum;
+                }
+
+                function hexToRgba(hex, alpha = 100) {
                     let rgba;
                     const defaultWhite = "rgba(255,255,255,1)";
                     let paireRgb;
-                    let withoutHash =  hex.replace("#","");
+                     withoutHash =  hex.replace("#","");
                     
                     const isValidHex = function(){
                         const hasHash = hex.charAt(0) === "#" ? true: false;
                         return hasHash;
                     }
-
-                    const hasDecimal = function(num) {
-                        return !!(num % 1);
-                    } 
-
-                    const alphaHandel = function(alpha){
-                        let alphaNum;
-                        if(hasDecimal(alpha)){
-                            let numStr = String(alpha).replace(".",""); 
-                            alphaNum =  Number("0."+ numStr) ; 
-                        }else{
-                            let  result = 100 * (alpha / 100);
-                            alphaNum = (alpha === 100 || (withoutHash.length === 3 && alpha > 49 ) || (withoutHash.length > 6 && alpha > 49 ) ) ? 1 : Number("0."+ result) ; 
-                        }
-                        return alphaNum;
-                    }
                     alpha = alphaHandel(alpha);
-
-                    const hexThreePattern = function(){
-                        paireRgb = withoutHash.replace(/.{1,1}/g, "$&$&");
-                    }
-                    const hexFivePatthern = function(){
-                        paireRgb = withoutHash+""+withoutHash.charAt(1);
-                        
-                    }
-                    const validHex = function(){
-                        if(withoutHash.length === 3){
-                            hexThreePattern()
-                        }else if(withoutHash.length === 5){
-                            hexFivePatthern()
-                        }else{
-                            paireRgb = withoutHash;
-                        }
-                    }; validHex();
                     const hexSixPattern = function(){
-                        paireRgb = paireRgb.match(/.{1,2}/g);
+                        paireRgb = withoutHash.match(/.{1,2}/g);
                         let r = parseInt(paireRgb[0],16);
                         let g = parseInt(paireRgb[1],16);
                         let b = parseInt(paireRgb[2],16);
                         rgba = `rgba(${r},${g},${b},${alpha})`
                         return rgba;
                     }
-
-                    return isValidHex() ?  hexSixPattern() : defaultWhite
+                    const isInvalid = function(){
+                        return (withoutHash.length !== 6 || !isValidHex()) ? true : false 
+                    }
+                    return isInvalid() ? defaultWhite: hexSixPattern();
                 }
+                var hexToRgbaVal;
+                chipPetrolElement.addEventListener("click", function(){
+                    previewElement.style.backgroundColor = chipPetrolElement.style.backgroundColor
+                   
+                })
 
+                let semytransparentEle = document.getElementsByClassName("chip--half-green")[0];
+                
+                semytransparentEle.addEventListener("click", function(){
+                    let bgcolor = semytransparentEle.style.backgroundColor;
+                    previewElement.style.backgroundColor= bgcolor;
+                    component.dataset.color = bgcolor;
+                    alphaInput.value = 50;
+                    alphaValueDisplay.innerText = 50;
+                    colorInput.value = "#00c3d0";
+                    let rgbaToHexVal = String(rgbaToHex(bgcolor)).split(",")[0];
+                    colorValueDisplay.innerText = rgbaToHexVal;
+                });
+
+                var currentAlphaVal = 100; 
+                colorInput.addEventListener("change", function(eve){
+                    hexToRgbaVal = hexToRgba(eve.target.value,currentAlphaVal);
+                    alphaInput.value = currentAlphaVal;
+                    alphaValueDisplay.innerText = currentAlphaVal;
+                    previewElement.style.backgroundColor = hexToRgbaVal;
+                    colorValueDisplay.innerText = eve.target.value;
+                    // component.dataset.color = hexToRgbaVal;
+                    console.log(component.getAttribute('data-color'));
+                    
+                })
+                const isRgb = function(arg){
+                    return String(arg).includes("rgb") ? true : false;
+                }
+                alphaInput.addEventListener("change", function(eve){
+                    currentAlphaVal =  alphaHandel(eve.target.value);
+                    let bgc = previewElement.style.backgroundColor;
+                    hexToRgbaVal = hexToRgba(colorValueDisplay.innerText,eve.target.value);
+                    previewElement.style.backgroundColor = hexToRgbaVal;
+                    alphaValueDisplay.innerText = eve.target.value;
+                })
             // this is not really required for the tests, it's just useful if you want
             (function init() {})();
         </script>
@@ -270,6 +303,6 @@
         <div id="qunit-fixture"></div>
         <script src="node_modules/qunit/qunit/qunit.js"></script>
         <script src="spec/colors.spec.js"></script>
-        <!--<script src="spec/component.spec.js"></script>-->
+        <script src="spec/component.spec.js"></script>
     </body>
 </html>
