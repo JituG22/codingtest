@@ -1,0 +1,4 @@
+# Application specific files
+venv
+node_modules
+.sass-cache
