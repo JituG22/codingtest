@@ -103,7 +103,30 @@
              * @param string
              * @return tuple [string, float], defaults to white with 100% opacity.
              */
-            function rgbaToHex(rgba) {}
+             function rgbaToHex(orig) {
+                let a;
+                let isPercent;
+                let rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i);
+                let alpha = (rgb && rgb[4] || "").trim();
+                let hex = rgb ?
+                (rgb[1] | 1 << 8).toString(16).slice(1) +
+                (rgb[2] | 1 << 8).toString(16).slice(1) +
+                (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
+               
+                if(orig === "rgba" || orig === "rgba()"){
+                    hex =  ['#ffffff', 100];
+                }else{
+                        if (alpha !== "") {
+                        a = alpha;
+                    } else {
+                        a = 01;
+                    }
+                    // multiply before convert to HEX
+                    a = ((a * 255) | 1 << 8).toString(16).slice(1)
+                    hex = ["#"+hex, Number((alpha * 100).toFixed(3))];
+                }
+                return hex;
+            }
 
             /**
              * Combines a hex value (#aa5588) and an alpha value into an rgba string "rgba(255,255,255,1)"
