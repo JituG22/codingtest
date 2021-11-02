@@ -133,7 +133,61 @@
              * @param tuple [string, float]
              * @return string an rgba() color, it defaults to white
              */
-            function hexToRgba(hex, alpha = 100) {}
+             function hexToRgba(hex, alpha = 100) {
+                    let rgba;
+                    const defaultWhite = "rgba(255,255,255,1)";
+                    let paireRgb;
+                    let withoutHash =  hex.replace("#","");
+                    
+                    const isValidHex = function(){
+                        const hasHash = hex.charAt(0) === "#" ? true: false;
+                        return hasHash;
+                    }
+
+                    const hasDecimal = function(num) {
+                        return !!(num % 1);
+                    } 
+
+                    const alphaHandel = function(alpha){
+                        let alphaNum;
+                        if(hasDecimal(alpha)){
+                            let numStr = String(alpha).replace(".",""); 
+                            alphaNum =  Number("0."+ numStr) ; 
+                        }else{
+                            let  result = 100 * (alpha / 100);
+                            alphaNum = (alpha === 100 || (withoutHash.length === 3 && alpha > 49 ) || (withoutHash.length > 6 && alpha > 49 ) ) ? 1 : Number("0."+ result) ; 
+                        }
+                        return alphaNum;
+                    }
+                    alpha = alphaHandel(alpha);
+
+                    const hexThreePattern = function(){
+                        paireRgb = withoutHash.replace(/.{1,1}/g, "$&$&");
+                    }
+                    const hexFivePatthern = function(){
+                        paireRgb = withoutHash+""+withoutHash.charAt(1);
+                        
+                    }
+                    const validHex = function(){
+                        if(withoutHash.length === 3){
+                            hexThreePattern()
+                        }else if(withoutHash.length === 5){
+                            hexFivePatthern()
+                        }else{
+                            paireRgb = withoutHash;
+                        }
+                    }; validHex();
+                    const hexSixPattern = function(){
+                        paireRgb = paireRgb.match(/.{1,2}/g);
+                        let r = parseInt(paireRgb[0],16);
+                        let g = parseInt(paireRgb[1],16);
+                        let b = parseInt(paireRgb[2],16);
+                        rgba = `rgba(${r},${g},${b},${alpha})`
+                        return rgba;
+                    }
+
+                    return isValidHex() ?  hexSixPattern() : defaultWhite
+                }
 
             // this is not really required for the tests, it's just useful if you want
             (function init() {})();
