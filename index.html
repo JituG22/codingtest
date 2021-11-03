@@ -97,7 +97,6 @@
             const onEveryFrame = () => {
                 // this can bu run on "every frame"
             };
-
             /**
              * Converts rgba string "rgba(255,255,255,1)" into separate hex and aplha (percentual) values
              * NOTE: alpha must be represented in percentage.
@@ -134,9 +133,7 @@
              * @param tuple [string, float]
              * @return string an rgba() color, it defaults to white
              */
-                const isDecimal = function(num) {
-                        return !!(num % 1);
-                    } 
+                const isDecimal = function(num) {   return !!(num % 1); } 
                 var alphaNum;
                 var withoutHash;
                 const alphaHandel = function(alpha){
@@ -184,12 +181,14 @@
                 }
                 var hexToRgbaVal;
                 chipPetrolElement.addEventListener("click", function(){
-                    previewElement.style.backgroundColor = chipPetrolElement.style.backgroundColor
-                   
+                    alphaInput.value = 100;
+                    alphaValueDisplay.innerText = 100;
+                    previewElement.style.backgroundColor = chipPetrolElement.getAttribute('data-rgba')
+                    component.dataset.color = chipPetrolElement.getAttribute('data-rgba');
                 })
 
                 let semytransparentEle = document.getElementsByClassName("chip--half-green")[0];
-                
+
                 semytransparentEle.addEventListener("click", function(){
                     let bgcolor = semytransparentEle.style.backgroundColor;
                     previewElement.style.backgroundColor= bgcolor;
@@ -203,15 +202,14 @@
 
                 var currentAlphaVal = 100; 
                 colorInput.addEventListener("change", function(eve){
-                    hexToRgbaVal = hexToRgba(eve.target.value,currentAlphaVal);
-                    alphaInput.value = currentAlphaVal;
-                    alphaValueDisplay.innerText = currentAlphaVal;
+                    hexToRgbaVal = hexToRgba(eve.target.value,100);
                     previewElement.style.backgroundColor = hexToRgbaVal;
+                    component.dataset.color = hexToRgbaVal;
                     colorValueDisplay.innerText = eve.target.value;
-                    // component.dataset.color = hexToRgbaVal;
-                    console.log(component.getAttribute('data-color'));
-                    
+                    alphaValueDisplay.innerText = 100;
+                    alphaInput.value = 100;
                 })
+                
                 const isRgb = function(arg){
                     return String(arg).includes("rgb") ? true : false;
                 }
