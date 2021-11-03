@@ -185,7 +185,7 @@
                     alphaValueDisplay.innerText = 100;
                     previewElement.style.backgroundColor = chipPetrolElement.getAttribute('data-rgba')
                     component.dataset.color = chipPetrolElement.getAttribute('data-rgba');
-                    rgbaToHexVal = rgbaToHex(chipPetrolElement.getAttribute('data-rgba'));
+                    let rgbaToHexVal = rgbaToHex(chipPetrolElement.getAttribute('data-rgba'));
                     colorInput.value = rgbaToHexVal[0];
                     colorValueDisplay.innerText = rgbaToHexVal[0]
                     hexToRgbaVal = chipPetrolElement.getAttribute('data-rgba')
@@ -199,9 +199,9 @@
                     component.dataset.color = bgcolor;
                     alphaInput.value = 50;
                     alphaValueDisplay.innerText = 50;
-                    colorInput.value = "#00c3d0";
-                    let rgbaToHexVal = String(rgbaToHex(bgcolor)).split(",")[0];
-                    colorValueDisplay.innerText = rgbaToHexVal;
+                    let rgbaToHexVal = rgbaToHex(semytransparentEle.getAttribute('data-rgba'));
+                    colorInput.value = rgbaToHexVal[0];
+                    colorValueDisplay.innerText = rgbaToHexVal[0];
                 });
 
                 var currentAlphaVal = 100; 
@@ -220,7 +220,7 @@
                 alphaInput.addEventListener("change", function(eve){
                     currentAlphaVal =  alphaHandel(eve.target.value);
                     let bgc = previewElement.style.backgroundColor;
-                    hexToRgbaVal = hexToRgba(colorValueDisplay.innerText,eve.target.value);
+                    let hexToRgbaVal = hexToRgba(colorValueDisplay.innerText,eve.target.value);
                     previewElement.style.backgroundColor = hexToRgbaVal;
                     alphaValueDisplay.innerText = eve.target.value;
                 })
